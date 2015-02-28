@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ASU Songbook</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="sync_song">Sync song</string>
+
+</resources>
