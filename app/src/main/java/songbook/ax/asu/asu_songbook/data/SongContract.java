@@ -31,8 +31,11 @@ public class SongContract {
         //A version control value
         public static final String COLUMN_LAST_UPADTED = "last_updated";
 
-        public static Uri buildSongUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
+        public static final String COLUMN_TEXT = "song_text";
+
+        public static Uri buildSongUri(String id) {
+            //return ContentUris.withAppendedId(CONTENT_URI, id);
+            return CONTENT_URI.buildUpon().build();//.appendPath("song").build();
         }
     }
 

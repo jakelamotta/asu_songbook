@@ -9,10 +9,10 @@ import songbook.ax.asu.asu_songbook.data.SongContract.*;
  */
 public class SongDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
     static final String DATABASE_NAME = "songs.db";
 
-    public SongDbHelper(Context context) {
+    public SongDbHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -22,8 +22,9 @@ public class SongDbHelper extends SQLiteOpenHelper {
                 SongTable._ID + " INTEGER PRIMARY KEY," +
                 SongTable.COLUMN_SONG_NAME + " TEXT UNIQUE NOT NULL, " +
                 SongTable.COLUMN_SONG_ID + " INTEGER UNIQUE NOT NULL, " +
-                SongTable.COLUMN_SONG_MELODY + " TEXT UNIQUE, " +
-                SongTable.COLUMN_LAST_UPADTED + " INTEGER NOT NULL " +
+                SongTable.COLUMN_SONG_MELODY + " TEXT, " +
+                SongTable.COLUMN_LAST_UPADTED + " INTEGER NOT NULL, " +
+                SongTable.COLUMN_TEXT + " TEXT" +
                 " );";
 
         db.execSQL(SQL_CREATE_SONG_TABLE);

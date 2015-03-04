@@ -7,6 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
+
+import java.util.Iterator;
 
 
 /**
@@ -15,12 +18,18 @@ import android.net.Uri;
 public class SongProvider extends ContentProvider {
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+    private static final String LOG_TAG = SongProvider.class.getSimpleName();
     private SongDbHelper mHelper;
 
     static final int SONG = 100;
     static final int SONG_WITH_EVENT = 101;
 
-    private static SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
+    private static SQLiteQueryBuilder songQueryBuilder;
+
+    static{
+        songQueryBuilder = new SQLiteQueryBuilder();
+        songQueryBuilder.setTables(SongContract.SongTable.NAME);
+    }
 
     @Override
     public boolean onCreate() {
@@ -33,7 +42,8 @@ public class SongProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
-        switch (sUriMatcher.match(uri)) {
+        int match = sUriMatcher.match(uri);
+        switch (match) {
             case SONG: {
                 retCursor = mHelper.getReadableDatabase().query(
                         SongContract.SongTable.NAME,
@@ -47,7 +57,7 @@ public class SongProvider extends ContentProvider {
                 break;
             }
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException("Unknown uri: " + uri + " " + Integer.toString(match));
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
@@ -68,15 +78,23 @@ public class SongProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        Iterator it = values.keySet().iterator();
+
+        while (it.hasNext()){
+            String key = it.next().toString();
+            Log.v(LOG_TAG,values.getAsString(key));
+        }
+
         final SQLiteDatabase db = mHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
 
         switch (match) {
             case SONG: {
+
                 long _id = db.insert(SongContract.SongTable.NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = SongContract.SongTable.buildSongUri(_id);
+                    returnUri = SongContract.SongTable.buildSongUri("_id");
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -137,10 +155,13 @@ public class SongProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case SONG:
+
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values) {
+
+
                         long _id = db.insert(SongContract.SongTable.NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
